@@ -10,4 +10,4 @@ The macro nad ui file should be installed in the default macro directory of Free
 
 ## Image
 
-![Array Image](/Images/Orthogonal Array.png)
+![Array Image](/Images/OrthogonalArray.png)
