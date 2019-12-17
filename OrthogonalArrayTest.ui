@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>422</width>
-    <height>618</height>
+    <width>401</width>
+    <height>760</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -182,13 +182,6 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
-       <widget class="Gui::QuantitySpinBox" name="IntervalZ_x">
-        <property name="unit" stdset="0">
-         <string notr="true"/>
-        </property>
-       </widget>
-      </item>
       <item row="1" column="0">
        <widget class="QLabel" name="label_10">
         <property name="maximumSize">
@@ -205,6 +198,27 @@
         </property>
        </widget>
       </item>
+      <item row="3" column="1">
+       <widget class="Gui::QuantitySpinBox" name="IntervalZ_z">
+        <property name="unit" stdset="0">
+         <string notr="true"/>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="Gui::QuantitySpinBox" name="IntervalZ_x">
+        <property name="unit" stdset="0">
+         <string notr="true"/>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="Gui::QuantitySpinBox" name="IntervalZ_y">
+        <property name="unit" stdset="0">
+         <string notr="true"/>
+        </property>
+       </widget>
+      </item>
       <item row="3" column="0">
        <widget class="QLabel" name="label_11">
         <property name="maximumSize">
@@ -218,20 +232,6 @@
         </property>
         <property name="alignment">
          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="Gui::QuantitySpinBox" name="IntervalZ_z">
-        <property name="unit" stdset="0">
-         <string notr="true"/>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="Gui::QuantitySpinBox" name="IntervalZ_y">
-        <property name="unit" stdset="0">
-         <string notr="true"/>
         </property>
        </widget>
       </item>
@@ -337,10 +337,10 @@
      </layout>
     </widget>
    </item>
-   <item row="1" column="2">
-    <widget class="QLineEdit" name="lineEdit_2">
+   <item row="3" column="2">
+    <widget class="QCheckBox" name="checkBox_2">
      <property name="text">
-      <string>Array</string>
+      <string/>
      </property>
     </widget>
    </item>
@@ -354,11 +354,56 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="2">
-    <widget class="QCheckBox" name="checkBox_2">
+   <item row="1" column="2">
+    <widget class="QLineEdit" name="lineEdit_2">
      <property name="text">
-      <string/>
+      <string>Array</string>
      </property>
+    </widget>
+   </item>
+   <item row="7" column="0" colspan="3">
+    <widget class="QGroupBox" name="groupBox_4">
+     <property name="title">
+      <string>Number of copies</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_5">
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_15">
+        <property name="text">
+         <string>Z</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_13">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>X:     </string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_14">
+        <property name="text">
+         <string>Y</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="Gui::UIntSpinBox" name="uintSpinBox"/>
+      </item>
+      <item row="1" column="1">
+       <widget class="Gui::UIntSpinBox" name="uintSpinBox_2"/>
+      </item>
+      <item row="2" column="1">
+       <widget class="Gui::UIntSpinBox" name="uintSpinBox_3"/>
+      </item>
+     </layout>
     </widget>
    </item>
   </layout>
@@ -368,6 +413,11 @@
    <class>Gui::QuantitySpinBox</class>
    <extends>QWidget</extends>
    <header>Gui/QuantitySpinBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Gui::UIntSpinBox</class>
+   <extends>QSpinBox</extends>
+   <header>Gui/SpinBox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
