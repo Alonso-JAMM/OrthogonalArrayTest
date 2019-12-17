@@ -1,1 +1,35 @@
-import F
+import FreeCAD, FreeCADGui
+
+# Geting ui location for this Macro
+UserParam = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Macro")
+macroPath = UserParam.GetString("MacroPath", "") + "/"
+uiLocation = macroPath.replace("\\", "/")
+uiLocation = uiLocation + "OrthogonalArrayTest.ui"
+
+
+class OrthogonalArrayTask:
+    def __init__(self):
+        self.form = FreeCADGui.PySideUic.loadUi(uiLocation)
+        self.setIntervals()
+        
+    def setIntervals(self):
+        """ Sets the default units to the spin boxes and it puts the initial values in the main coordinates."""
+        quantity = FreeCAD.Units.Quantity(1.00, FreeCAD.Units.Length)   
+        initialValue = quantity.Value
+        unit = quantity.getUserPreferred()[2]   # default user length unit
+        self.form.IntervalX_x.setProperty('unit', unit)
+        self.form.IntervalX_y.setProperty('unit', unit)
+        self.form.IntervalX_z.setProperty('unit', unit)
+        self.form.IntervalY_x.setProperty('unit', unit)
+        self.form.IntervalY_y.setProperty('unit', unit)
+        self.form.IntervalY_z.setProperty('unit', unit)
+        self.form.IntervalZ_x.setProperty('unit', unit)
+        self.form.IntervalZ_y.setProperty('unit', unit)
+        self.form.IntervalZ_z.setProperty('unit', unit)
+        self.form.IntervalX_x.setProperty('rawValue', initialValue)
+        self.form.IntervalY_y.setProperty('rawValue', initialValue)
+        self.form.IntervalZ_z.setProperty('rawValue', initialValue) 
+        
+
+panel = OrthogonalArrayTask()
+FreeCADGui.Control.showDialog(panel)
