@@ -163,6 +163,8 @@ class OrthogonalArrayTask:
         zNum = self.form.zNum.value()
         useLink = self.form.linkCheck.isChecked()
         arrayName = self.form.arrayName.text()
+        if baseObject is None:
+            return
         if self.array is None:
             self.array = Draft.makeArray(baseObject, xVector, yVector, 
                                          zVector, xNum, yNum, zNum, 
