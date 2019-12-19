@@ -84,8 +84,8 @@ class OrthogonalArrayTask:
     def previewClick(self):
         """ Toggles preview button. """
         if not self.previewToggle:
-            self.makePreviewArray()
             self.clearToggles()
+            self.makePreviewArray()
         self.previewToggle = not self.previewToggle
         
     def clearToggles(self):
@@ -101,6 +101,7 @@ class OrthogonalArrayTask:
     def accept(self):
         FreeCADGui.Control.closeDialog()
         self.deleteBaseObserver()
+        self.makePreviewArray()
 
     def reject(self):
         FreeCADGui.Control.closeDialog()
@@ -167,20 +168,6 @@ class OrthogonalArrayTask:
                                          zVector, xNum, yNum, zNum, 
                                          name=arrayName, useLink=useLink)
             self.updateConnections()
-        else:
-            # updates array values
-            # Note that useLink is not updated. The array needs to be 
-            # deleted first
-            if baseObject is None:
-                return
-            #self.array.Base = baseObject
-            #self.array.IntervalX = xVector
-            #self.array.IntervalY = yVector
-            #self.array.IntervalZ = zVector
-            #self.array.NumberX = xNum
-            #self.array.NumberY = yNum
-            #self.array.NumberZ = zNum
-            #self.Label = arrayName
         self.array.recompute()
     
     def updateConnections(self):
@@ -201,6 +188,7 @@ class OrthogonalArrayTask:
         self.form.xNum.valueChanged.connect(self.xNumUpdate)
         self.form.yNum.valueChanged.connect(self.yNumUpdate)
         self.form.zNum.valueChanged.connect(self.zNumUpdate)
+        self.form.linkCheck.clicked.connect(self.linkUpdate)
         
     def intervalX_xUpdate(self, newValue):
         qty = FreeCAD.Units.Quantity
@@ -270,6 +258,11 @@ class OrthogonalArrayTask:
     
     def labelUpdate(self, newLabel):
         self.array.Label = newLabel
+    
+    def linkUpdate(self):
+        # We need to delete the current array in order to change the link  option
+        self.deleteArray()
+        self.makePreviewArray()
     
     def deleteArray(self):
         """ Removes preview array from the document and restores the 
