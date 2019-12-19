@@ -1,4 +1,7 @@
-import FreeCAD, FreeCADGui
+import FreeCAD
+import FreeCADGui
+from PySide import QtGui, QtCore
+import Draft
 
 # Geting ui location for this Macro
 UserParam = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Macro")
@@ -7,29 +10,275 @@ uiLocation = macroPath.replace("\\", "/")
 uiLocation = uiLocation + "OrthogonalArrayTest.ui"
 
 
+class BaseSelectionObserver:
+    """ Observer to get a base after clicking on an object and put name of 
+    selected object on the base QlineEdit"""
+    def __init__(self, lineEdit=None):
+        self.baseSelection = None
+        self.lineEdit = lineEdit
+    
+    def addSelection(self, doc, obj, sub, pos):
+        """ Adds selected object name to the QLineEdit. It works for both 
+        normal and linked objects
+        """
+        selection = FreeCADGui.Selection.getSelectionEx("", 0)[0]
+        # Note that if an object is inside another object, then we are going
+        # to get the parent object name 
+        if self.lineEdit:
+            self.lineEdit.setText(selection.ObjectName)
+
+
 class OrthogonalArrayTask:
-    def __init__(self):
+    """ Will create a wizard to create an orthogonal Array. This class
+    requires a Selection Observer to be given to it."""
+    def __init__(self, SelectionObserver):
         self.form = FreeCADGui.PySideUic.loadUi(uiLocation)
         self.setIntervals()
+        self.setNums()
+        self.baseSelectToggle = False
+        self.previewToggle = False
+        self.baseObserver = SelectionObserver()
+        self.array = None   # The actual array object
+        # connect signals and slots
+        self.form.baseSelect.clicked.connect(self.baseSelectClick)
+        self.form.baseName.textChanged.connect(self.verifySelection)
+        self.form.preview.clicked.connect(self.previewClick)
         
     def setIntervals(self):
-        """ Sets the default units to the spin boxes and it puts the initial values in the main coordinates."""
+        """ Sets the default units to the spin boxes and it puts the initial 
+        values in the main coordinates."""
         quantity = FreeCAD.Units.Quantity(1.00, FreeCAD.Units.Length)   
         initialValue = quantity.Value
         unit = quantity.getUserPreferred()[2]   # default user length unit
-        self.form.IntervalX_x.setProperty('unit', unit)
-        self.form.IntervalX_y.setProperty('unit', unit)
-        self.form.IntervalX_z.setProperty('unit', unit)
-        self.form.IntervalY_x.setProperty('unit', unit)
-        self.form.IntervalY_y.setProperty('unit', unit)
-        self.form.IntervalY_z.setProperty('unit', unit)
-        self.form.IntervalZ_x.setProperty('unit', unit)
-        self.form.IntervalZ_y.setProperty('unit', unit)
-        self.form.IntervalZ_z.setProperty('unit', unit)
-        self.form.IntervalX_x.setProperty('rawValue', initialValue)
-        self.form.IntervalY_y.setProperty('rawValue', initialValue)
-        self.form.IntervalZ_z.setProperty('rawValue', initialValue) 
+        self.form.intervalX_x.setProperty('unit', unit)
+        self.form.intervalX_y.setProperty('unit', unit)
+        self.form.intervalX_z.setProperty('unit', unit)
+        self.form.intervalY_x.setProperty('unit', unit)
+        self.form.intervalY_y.setProperty('unit', unit)
+        self.form.intervalY_z.setProperty('unit', unit)
+        self.form.intervalZ_x.setProperty('unit', unit)
+        self.form.intervalZ_y.setProperty('unit', unit)
+        self.form.intervalZ_z.setProperty('unit', unit)
+        self.form.intervalX_x.setProperty('rawValue', initialValue)
+        self.form.intervalY_y.setProperty('rawValue', initialValue)
+        self.form.intervalZ_z.setProperty('rawValue', initialValue) 
+        
+    def setNums(self):
+        """ Sets the default number of copies on each direction"""
+        self.form.xNum.setProperty("value", 2)
+        self.form.yNum.setProperty("value", 2)
+        self.form.zNum.setProperty("value", 1)
+        
+    def baseSelectClick(self):
+        """ Toggles base select button. """
+        FreeCADGui.Selection.clearSelection()
+        if not self.baseSelectToggle:
+            self.form.baseSelect.setText("Selecting")
+            self.addBaseObserver()
+            self.clearToggles()
+        else:
+            self.form.baseSelect.setText("Select")
+            self.deleteBaseObserver()
+        self.baseSelectToggle = not self.baseSelectToggle
+        
+    def previewClick(self):
+        """ Toggles preview button. """
+        if not self.previewToggle:
+            self.makePreviewArray()
+            self.clearToggles()
+        self.previewToggle = not self.previewToggle
+        
+    def clearToggles(self):
+        """ Make sure preview and select buttons are not checked at the same 
+        time. """
+        if self.baseSelectToggle:
+            self.baseSelectClick()
+            self.form.baseSelect.setChecked(False)
+        if self.previewToggle:
+            self.previewClick()
+            self.form.preview.setChecked(False)
+            
+    def accept(self):
+        FreeCADGui.Control.closeDialog()
+        self.deleteBaseObserver()
+
+    def reject(self):
+        FreeCADGui.Control.closeDialog()
+        self.deleteBaseObserver()
+        if self.array:
+            self.deleteArray()
+        
+    def deleteBaseObserver(self):
+        """ Remove observer once it is not needed. """
+        if self.baseObserver is not None:
+            self.baseObserver.lineEdit = None  # Stop selecting more objects
+            FreeCADGui.Selection.removeObserver(self.baseObserver)
+    
+    def addBaseObserver(self):
+        """ Adds observer only when it is needed. """
+        if self.baseObserver.lineEdit is None:
+            self.baseObserver.lineEdit = self.form.baseName
+            FreeCADGui.Selection.addObserver(self.baseObserver)
+    
+    def verifySelection(self):
+        """ Checks whether the text in the Selection lineEdit is valid name 
+        of an object in the document. If the object exists, then the preview 
+        button is enabled and sets the link checkbox depending on whether 
+        the object is a link or not. """
+        baseLabel = self.form.baseName.text()
+        baseObject = FreeCAD.ActiveDocument.getObject(baseLabel)
+        if baseObject is None:
+            self.form.preview.setEnabled(False)
+            return
+        # Now we know that the name in the selection lineEdit is valid 
+        self.form.preview.setEnabled(True)
+        if baseObject.TypeId == "App::Link":
+            self.form.linkCheck.setChecked(True)
+        else:
+            self.form.linkCheck.setChecked(False)
+             
+    def makePreviewArray(self):
+        """ Will create an initial array so the user can see what will be 
+        the final shape of the array. If an array already exists, then the 
+        array will be updated. """
+        qty = FreeCAD.Units.Quantity
+        vector = FreeCAD.Vector
+        intervalX_x = qty(self.form.intervalX_x.text()).Value
+        intervalX_y = qty(self.form.intervalX_y.text()).Value
+        intervalX_z = qty(self.form.intervalX_z.text()).Value
+        intervalY_x = qty(self.form.intervalY_x.text()).Value
+        intervalY_y = qty(self.form.intervalY_y.text()).Value
+        intervalY_z = qty(self.form.intervalY_z.text()).Value
+        intervalZ_x = qty(self.form.intervalZ_x.text()).Value
+        intervalZ_y = qty(self.form.intervalZ_y.text()).Value
+        intervalZ_z = qty(self.form.intervalZ_z.text()).Value
+        baseName = self.form.baseName.text()
+        baseObject = FreeCAD.ActiveDocument.getObject(baseName)
+        xVector = vector(intervalX_x, intervalX_y, intervalX_z)
+        yVector = vector(intervalY_x, intervalY_y, intervalY_z)
+        zVector = vector(intervalZ_x, intervalZ_y, intervalZ_z)
+        xNum = self.form.xNum.value() 
+        yNum = self.form.yNum.value()
+        zNum = self.form.zNum.value()
+        useLink = self.form.linkCheck.isChecked()
+        arrayName = self.form.arrayName.text()
+        if self.array is None:
+            self.array = Draft.makeArray(baseObject, xVector, yVector, 
+                                         zVector, xNum, yNum, zNum, 
+                                         name=arrayName, useLink=useLink)
+            self.updateConnections()
+        else:
+            # updates array values
+            # Note that useLink is not updated. The array needs to be 
+            # deleted first
+            if baseObject is None:
+                return
+            #self.array.Base = baseObject
+            #self.array.IntervalX = xVector
+            #self.array.IntervalY = yVector
+            #self.array.IntervalZ = zVector
+            #self.array.NumberX = xNum
+            #self.array.NumberY = yNum
+            #self.array.NumberZ = zNum
+            #self.Label = arrayName
+        self.array.recompute()
+    
+    def updateConnections(self):
+        """ Set connections between the widgets to updatePreviewArray() """
+        if self.array is None:
+            return
+        self.form.baseName.textChanged.connect(self.baseUpdate)
+        self.form.arrayName.textChanged.connect(self.labelUpdate)
+        self.form.intervalX_x.valueChanged.connect(self.intervalX_xUpdate)
+        self.form.intervalX_y.valueChanged.connect(self.intervalX_yUpdate)
+        self.form.intervalX_z.valueChanged.connect(self.intervalX_zUpdate)
+        self.form.intervalY_x.valueChanged.connect(self.intervalY_xUpdate)
+        self.form.intervalY_y.valueChanged.connect(self.intervalY_yUpdate)
+        self.form.intervalY_z.valueChanged.connect(self.intervalY_zUpdate)
+        self.form.intervalZ_x.valueChanged.connect(self.intervalZ_xUpdate)
+        self.form.intervalZ_y.valueChanged.connect(self.intervalZ_yUpdate)
+        self.form.intervalZ_z.valueChanged.connect(self.intervalZ_zUpdate)
+        self.form.xNum.valueChanged.connect(self.xNumUpdate)
+        self.form.yNum.valueChanged.connect(self.yNumUpdate)
+        self.form.zNum.valueChanged.connect(self.zNumUpdate)
+        
+    def intervalX_xUpdate(self, newValue):
+        qty = FreeCAD.Units.Quantity
+        self.array.IntervalX.x = qty(newValue).Value
+        self.array.recompute()
+        
+    def intervalX_yUpdate(self, newValue):
+        qty = FreeCAD.Units.Quantity
+        self.array.IntervalX.y = qty(newValue).Value
+        self.array.recompute()
+    
+    def intervalX_zUpdate(self, newValue):
+        qty = FreeCAD.Units.Quantity
+        self.array.IntervalX.z = qty(newValue).Value
+        self.array.recompute()
+        
+    def intervalY_xUpdate(self, newValue):
+        qty = FreeCAD.Units.Quantity
+        self.array.IntervalY.x = qty(newValue).Value
+        self.array.recompute()
+    
+    def intervalY_yUpdate(self, newValue):
+        qty = FreeCAD.Units.Quantity
+        self.array.IntervalY.y = qty(newValue).Value
+        self.array.recompute()
+        
+    def intervalY_zUpdate(self, newValue):
+        qty = FreeCAD.Units.Quantity
+        self.array.IntervalY.z = qty(newValue).Value
+        self.array.recompute()
+    
+    def intervalZ_xUpdate(self, newValue):
+        qty = FreeCAD.Units.Quantity
+        self.array.IntervalZ.x = qty(newValue).Value
+        self.array.recompute()
+    
+    def intervalZ_yUpdate(self, newValue):
+        qty = FreeCAD.Units.Quantity
+        self.array.IntervalZ.y = qty(newValue).Value
+        self.array.recompute()
+    
+    def intervalZ_zUpdate(self, newValue):
+        qty = FreeCAD.Units.Quantity
+        self.array.IntervalZ.z = qty(newValue).Value
+        self.array.recompute()
+        
+    def xNumUpdate(self, newValue):
+        self.array.NumberX = newValue
+        self.array.recompute()
+    
+    def yNumUpdate(self, newValue):
+        self.array.NumberY = newValue
+        self.array.recompute()
+        
+    def zNumUpdate(self, newValue):
+        self.array.NumberZ = newValue
+        self.array.recompute()
+    
+    def baseUpdate(self, newBase):
+        newBaseObject = FreeCAD.ActiveDocument.getObject(newBase)
+        oldBaseObject = self.array.Base
+        if newBaseObject is None:
+            return
+        self.array.Base = newBaseObject
+        self.array.recompute()
+        oldBaseObject.Visibility = True
+    
+    def labelUpdate(self, newLabel):
+        self.array.Label = newLabel
+    
+    def deleteArray(self):
+        """ Removes preview array from the document and restores the 
+        visibility of the base object """
+        base = self.array.Base.Name
+        FreeCAD.ActiveDocument.removeObject(self.array.Name)
+        FreeCAD.ActiveDocument.getObject(base).Visibility = True
+        self.array = None
         
 
-panel = OrthogonalArrayTask()
+panel = OrthogonalArrayTask(BaseSelectionObserver)
 FreeCADGui.Control.showDialog(panel)
