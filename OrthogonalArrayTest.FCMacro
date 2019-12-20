@@ -1,6 +1,5 @@
 import FreeCAD
 import FreeCADGui
-from PySide import QtGui, QtCore
 import Draft
 
 # Geting ui location for this Macro
@@ -39,6 +38,7 @@ class OrthogonalArrayTask:
         self.previewToggle = False
         self.baseObserver = SelectionObserver()
         self.array = None   # The actual array object
+        self.addSelectedObj()
         # connect signals and slots
         self.form.baseSelect.clicked.connect(self.baseSelectClick)
         self.form.baseName.textChanged.connect(self.verifySelection)
@@ -86,6 +86,8 @@ class OrthogonalArrayTask:
         if not self.previewToggle:
             self.clearToggles()
             self.makePreviewArray()
+        else:
+            self.deleteArray()
         self.previewToggle = not self.previewToggle
         
     def clearToggles(self):
@@ -262,7 +264,7 @@ class OrthogonalArrayTask:
         self.array.Label = newLabel
     
     def linkUpdate(self):
-        # We need to delete the current array in order to change the link  option
+        # We need to delete the current array in order to change the link option
         self.deleteArray()
         self.makePreviewArray()
     
@@ -273,7 +275,16 @@ class OrthogonalArrayTask:
         FreeCAD.ActiveDocument.removeObject(self.array.Name)
         FreeCAD.ActiveDocument.getObject(base).Visibility = True
         self.array = None
-        
+
+    def addSelectedObj(self):
+        """ Checks if an object is selected before calling the task. If an 
+        objct is selected, then use it as a base. """
+        selection = FreeCADGui.Selection.getSelectionEx("", 0)
+        if not selection:
+            return
+        self.form.baseName.setText(selection[0].ObjectName)
+        self.verifySelection()
+
 
 panel = OrthogonalArrayTask(BaseSelectionObserver)
 FreeCADGui.Control.showDialog(panel)
