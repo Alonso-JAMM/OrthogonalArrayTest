@@ -88,6 +88,9 @@
       </item>
       <item row="0" column="1">
        <widget class="Gui::QuantitySpinBox" name="intervalY_x">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Distance between copies in the x-direction of the Y-vector of the array.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
         <property name="unit" stdset="0">
          <string notr="true"/>
         </property>
@@ -95,6 +98,9 @@
       </item>
       <item row="1" column="1">
        <widget class="Gui::QuantitySpinBox" name="intervalY_y">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Distance between copies in the y-direction of the Y-vector of the array.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
         <property name="unit" stdset="0">
          <string notr="true"/>
         </property>
@@ -102,6 +108,9 @@
       </item>
       <item row="2" column="1">
        <widget class="Gui::QuantitySpinBox" name="intervalY_z">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Distance between copies in the z-direction of the Y-vector of the array.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
         <property name="unit" stdset="0">
          <string notr="true"/>
         </property>
@@ -112,6 +121,9 @@
    </item>
    <item row="0" column="0">
     <widget class="QPushButton" name="baseSelect">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Press the button then click on an object to choose the base for the array.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
      <property name="text">
       <string>Select</string>
      </property>
@@ -124,6 +136,9 @@
     <widget class="QPushButton" name="preview">
      <property name="enabled">
       <bool>false</bool>
+     </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Turn on/off the preview for the new array.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="text">
       <string>Preview</string>
@@ -151,8 +166,11 @@
    </item>
    <item row="0" column="2">
     <widget class="QLineEdit" name="baseName">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The name of the object can also be typed here. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
      <property name="text">
-      <string>Select a base for the array</string>
+      <string>Press Select then click on an object</string>
      </property>
     </widget>
    </item>
@@ -205,6 +223,9 @@
       </item>
       <item row="3" column="1">
        <widget class="Gui::QuantitySpinBox" name="intervalZ_z">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Distance between copies in the z-direction of the Z-vector of the array.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
         <property name="unit" stdset="0">
          <string notr="true"/>
         </property>
@@ -212,6 +233,9 @@
       </item>
       <item row="0" column="1">
        <widget class="Gui::QuantitySpinBox" name="intervalZ_x">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Distance between copies in the x-direction of the Z-vector of the array.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
         <property name="unit" stdset="0">
          <string notr="true"/>
         </property>
@@ -219,6 +243,9 @@
       </item>
       <item row="1" column="1">
        <widget class="Gui::QuantitySpinBox" name="intervalZ_y">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Distance between copies in the y-direction of the Z-vector of the array.00&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
         <property name="unit" stdset="0">
          <string notr="true"/>
         </property>
@@ -320,6 +347,9 @@
       </item>
       <item row="0" column="1">
        <widget class="Gui::QuantitySpinBox" name="intervalX_x">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Distance between copies in the x-direction of the X-vector of the array.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
         <property name="unit" stdset="0">
          <string/>
         </property>
@@ -327,6 +357,9 @@
       </item>
       <item row="1" column="1">
        <widget class="Gui::QuantitySpinBox" name="intervalX_y">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Distance between copies in the y-direction of the X-vector of the array.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
         <property name="unit" stdset="0">
          <string notr="true"/>
         </property>
@@ -334,6 +367,9 @@
       </item>
       <item row="2" column="1">
        <widget class="Gui::QuantitySpinBox" name="intervalX_z">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Distance between copies in the z-direction of the X-vector of the array.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
         <property name="unit" stdset="0">
          <string notr="true"/>
         </property>
@@ -344,6 +380,9 @@
    </item>
    <item row="2" column="2">
     <widget class="QCheckBox" name="linkCheck">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If this box is checked, then the array will be a link array.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
      <property name="text">
       <string/>
      </property>
@@ -361,6 +400,9 @@
    </item>
    <item row="1" column="2">
     <widget class="QLineEdit" name="arrayName">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Label for of the new array.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
      <property name="text">
       <string>Array</string>
      </property>
@@ -404,6 +446,9 @@
       </item>
       <item row="0" column="1">
        <widget class="QSpinBox" name="xNum">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Number of copies on the X-vector of the array.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
         <property name="minimum">
          <number>1</number>
         </property>
@@ -414,6 +459,9 @@
       </item>
       <item row="2" column="1">
        <widget class="QSpinBox" name="yNum">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Number of copies on the Y-vector of the array.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
         <property name="minimum">
          <number>1</number>
         </property>
@@ -424,6 +472,9 @@
       </item>
       <item row="3" column="1">
        <widget class="QSpinBox" name="zNum">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Number of copies on the Z-vector of the array.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
         <property name="minimum">
          <number>1</number>
         </property>
